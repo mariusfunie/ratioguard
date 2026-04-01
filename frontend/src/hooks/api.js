@@ -43,6 +43,13 @@ export const api = {
   assignProwlarrId: (prowlarrId, trackerId) => req('POST', '/prowlarr/assign', { prowlarr_id: prowlarrId, tracker_id: trackerId }),
   unassignProwlarrId: (trackerId) => req('DELETE', `/prowlarr/assign/${trackerId}`),
   syncProwlarrPriorities: () => req('POST', '/prowlarr/sync-priorities'),
+  getIndexerStats: () => req('GET', '/prowlarr/indexer-stats'),
+  getTransmissionTorrents: (tracker) => req('GET', `/transmission/torrents${tracker ? '?tracker=' + tracker : ''}`),
+  getTransmissionStats: () => req('GET', '/transmission/stats'),
+  getTransmissionRecommendations: () => req('GET', '/transmission/recommendations'),
+  transmissionAction: (ids, action) => req('POST', '/transmission/action', { ids, action }),
+  autoTransmissionPriorities: () => req('POST', '/transmission/auto-priorities'),
+  resetTransmissionPriorities: () => req('POST', '/transmission/reset-priorities'),
   autoTransmissionPriorities: () => req('POST', '/transmission/auto-priorities'),
   resetTransmissionPriorities: () => req('POST', '/transmission/reset-priorities'),
 }
