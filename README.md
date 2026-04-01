@@ -1,3 +1,4 @@
+cat > ~/Downloads/ratioguard/README.md << 'EOF'
 # RatioGuard
 
 Self-hosted ratio monitor for private torrent trackers, with Prowlarr and Transmission integration.
@@ -7,11 +8,16 @@ Self-hosted ratio monitor for private torrent trackers, with Prowlarr and Transm
 ## Features
 
 - Ratio monitoring per tracker (Cookie, Login, API auth methods)
-- Prowlarr integration - auto-sync indexer priorities based on ratio
-- Transmission integration - seeding recommendations and automatic bandwidth priority management
+- Ratio trend indicator — see if your ratio is going up ↑ or down ↓ since last check
+- Free leech detection — automatic badge when a tracker is in free leech mode
+- Prowlarr integration — auto-sync indexer priorities based on ratio
+- Transmission integration — seeding recommendations and automatic bandwidth priority management
 - Discord notifications when ratio drops below threshold
 - Dashboard with ratio history chart and Prowlarr activity stats
+- Transmission settings configurable from UI (no need to edit config files)
+- Backup & restore — export/import tracker configuration as JSON
 - Home Assistant sensors via REST API
+- Fully responsive UI — works on mobile and tablet
 
 ## Stack
 
@@ -23,7 +29,7 @@ Self-hosted ratio monitor for private torrent trackers, with Prowlarr and Transm
 
 ### 1. Clone the repository
 ```bash
-git clone https://github.com/yourusername/ratioguard.git
+git clone https://github.com/mariusfunie/ratioguard.git
 cd ratioguard
 ```
 
@@ -61,7 +67,7 @@ Access the UI at `http://localhost:7990`
 
 Go to the **Trackers** tab and add your trackers. Three authentication methods are supported:
 
-- **Cookie** - for trackers behind Cloudflare. Copy cookies from your browser's DevTools.
+- **Cookie** - for trackers behind Cloudflare. Copy cookies from your browser DevTools.
 - **Login** - username and password. Does not work with Cloudflare or CAPTCHA.
 - **API** - for trackers with an API key (Seedpool, Darkpeers, ItaTorrents, etc.)
 
@@ -71,11 +77,15 @@ In **Settings**, enter your Prowlarr URL and API key. After saving, go to the **
 
 ### Transmission
 
-In **Settings**, enter your Transmission URL, username and password (leave blank if authentication is disabled). Go to the **Transmission** tab for seeding recommendations and bandwidth priority management.
+In **Settings**, enter your Transmission URL, username and password. Use the **Test connection** button to verify. Go to the **Transmission** tab for seeding recommendations and bandwidth priority management.
 
 ### Discord notifications
 
-In **Settings**, enter your Discord Webhook URL. You will receive an alert whenever a tracker's ratio drops below its configured threshold.
+In **Settings**, enter your Discord Webhook URL. You will receive an alert whenever a tracker ratio drops below its configured threshold.
+
+### Backup & restore
+
+In **Settings**, use **Export backup** to download a JSON file with all your tracker configuration (passwords and API keys are excluded for security). Use **Import backup** to restore on a new installation.
 
 ### Home Assistant
 
@@ -133,3 +143,8 @@ ratioguard/
 ## License
 
 MIT
+EOF
+
+git add README.md
+git commit -m "Update README with new features"
+git push
