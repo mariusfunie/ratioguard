@@ -1,4 +1,4 @@
-cat > ~/Downloads/ratioguard/README.md << 'EOF'
+
 # RatioGuard
 
 Self-hosted ratio monitor for private torrent trackers, with Prowlarr and Transmission integration.
