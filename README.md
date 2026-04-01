@@ -142,9 +142,4 @@ ratioguard/
 
 ## License
 
-MIT
-EOF
 
-git add README.md
-git commit -m "Update README with new features"
-git push
