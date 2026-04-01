@@ -18,7 +18,6 @@ SIZE_UNITS = {
     "tib": 1024**4, "gib": 1024**3, "mib": 1024**2, "kib": 1024,
 }
 
-
 def validate_url(url):
     if not url or not url.strip():
         raise ValueError("URL is empty - please edit this tracker and set the correct URL")
@@ -26,7 +25,6 @@ def validate_url(url):
     if not url.startswith("http://") and not url.startswith("https://"):
         raise ValueError(f"URL missing protocol: '{url}'")
     return url
-
 
 def make_absolute(url, base_url):
     if not url:
@@ -36,13 +34,11 @@ def make_absolute(url, base_url):
     parsed = urlparse(base_url)
     return urljoin(f"{parsed.scheme}://{parsed.netloc}", url)
 
-
 def _parse_size_string(s):
     m = re.search(r"([0-9]+[.,][0-9]*|[0-9]+)\s*(TB|GB|MB|KB|TiB|GiB|MiB|KiB|B)\b", str(s), re.IGNORECASE)
     if m:
         return float(m.group(1).replace(",", ".")) * SIZE_UNITS.get(m.group(2).lower().strip(), 1)
     return None
-
 
 def _to_bytes(v):
     if v is None:
@@ -57,14 +53,12 @@ def _to_bytes(v):
     except Exception:
         return None
 
-
 def bytes_to_human(b):
     for unit in ["TB", "GB", "MB", "KB"]:
         div = SIZE_UNITS[unit.lower()]
         if b >= div:
             return f"{b / div:.2f} {unit}"
     return f"{b:.0f} B"
-
 
 def _parse_ratio_value(val):
     val = str(val).strip().rstrip(".")
@@ -78,7 +72,6 @@ def _parse_ratio_value(val):
         pass
     return None
 
-
 def extract_ratio_from_html(html):
     soup = BeautifulSoup(html, "html.parser")
     text = soup.get_text(" ", strip=True)
@@ -86,9 +79,9 @@ def extract_ratio_from_html(html):
     upload_bytes = None
     download_bytes = None
 
-    ratio_labels = re.compile(r"^(ratio|raport|share\s*ratio|seeding\s*ratio)$", re.IGNORECASE)
-    upload_labels = re.compile(r"^(uploaded?|total\s*upload(ed)?|up|incarcat|seeded)$", re.IGNORECASE)
-    download_labels = re.compile(r"^(downloaded?|total\s*download(ed)?|down|descarcat|leeched)$", re.IGNORECASE)
+    ratio_labels = re.compile(r"^(ratio|raport|share\s*ratio|seeding\s*ratio)\$", re.IGNORECASE)
+    upload_labels = re.compile(r"^(uploaded?|total\s*upload(ed)?|up|incarcat|seeded)\$", re.IGNORECASE)
+    download_labels = re.compile(r"^(downloaded?|total\s*download(ed)?|down|descarcat|leeched)\$", re.IGNORECASE)
 
     for cell in soup.find_all(["td", "th", "dt", "span", "div", "li"]):
         ct = cell.get_text(strip=True)
@@ -178,7 +171,14 @@ async def fetch_with_login(login_url, profile_url, username, password, session_c
         login_page = s.get(login_url, timeout=20)
         from bs4 import BeautifulSoup as _BS
         soup = _BS(login_page.text, "html.parser")
-        form = soup.find("form")
+        # cauta form-ul de login - cel care contine input de tip password
+        form = None
+        for f in soup.find_all("form"):
+            if f.find("input", {"type": "password"}):
+                form = f
+                break
+        if not form:
+            form = soup.find("form")
         data = {}
         if form:
             for inp in form.find_all("input"):
