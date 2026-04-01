@@ -32,6 +32,8 @@ export default function Transmission({ showToast }) {
   const [filterStatus, setFilterStatus] = useState('all')
   const [filterPriority, setFilterPriority] = useState('all')
   const [selected, setSelected] = useState(new Set())
+  const [sortCol, setSortCol] = useState(null)
+  const [sortDir, setSortDir] = useState('asc')
   const [actioning, setActioning] = useState(false)
   const [autoReport, setAutoReport] = useState(null)
 
@@ -51,12 +53,30 @@ export default function Transmission({ showToast }) {
   useEffect(() => { load() }, [])
 
   const trackers = ['all', ...new Set(torrents.map(t => t.tracker_name).filter(Boolean))]
-  const filtered = torrents.filter(t => {
-    if (filterTracker !== 'all' && t.tracker_name !== filterTracker) return false
-    if (filterStatus !== 'all' && t.status !== filterStatus) return false
-    if (filterPriority !== 'all' && t.bandwidth_priority !== filterPriority) return false
-    return true
-  })
+  const PRIO_ORDER = { high: 0, normal: 1, low: 2 }
+
+  const handleSort = (col) => {
+    if (sortCol === col) setSortDir(d => d === 'asc' ? 'desc' : 'asc')
+    else { setSortCol(col); setSortDir('asc') }
+  }
+
+  const filtered = torrents
+    .filter(t => {
+      if (filterTracker !== 'all' && t.tracker_name !== filterTracker) return false
+      if (filterStatus !== 'all' && t.status !== filterStatus) return false
+      if (filterPriority !== 'all' && t.bandwidth_priority !== filterPriority) return false
+      return true
+    })
+    .sort((a, b) => {
+      if (!sortCol) return 0
+      let va, vb
+      if (sortCol === 'prio') { va = PRIO_ORDER[a.bandwidth_priority] ?? 1; vb = PRIO_ORDER[b.bandwidth_priority] ?? 1 }
+      else if (sortCol === 'ratio') { va = a.ratio; vb = b.ratio }
+      else if (sortCol === 'upload') { va = a.uploaded_gb; vb = b.uploaded_gb }
+      else if (sortCol === 'seed') { va = a.hours_seeding; vb = b.hours_seeding }
+      else return 0
+      return sortDir === 'asc' ? va - vb : vb - va
+    })
   const priorityCounts = {
     high: torrents.filter(t => t.bandwidth_priority === 'high').length,
     normal: torrents.filter(t => t.bandwidth_priority === 'normal').length,
@@ -233,10 +253,18 @@ export default function Transmission({ showToast }) {
               <th className="w-8 px-3 py-2" />
               <th className="text-[10px] text-[var(--text3)] uppercase tracking-wider text-left px-2 py-2 font-normal">Name</th>
               <th className="text-[10px] text-[var(--text3)] uppercase tracking-wider text-left px-2 py-2 font-normal">Tracker</th>
-              <th className="text-[10px] text-[var(--text3)] uppercase tracking-wider text-center px-2 py-2 font-normal">Prio</th>
-              <th className="text-[10px] text-[var(--text3)] uppercase tracking-wider text-right px-2 py-2 font-normal">Ratio</th>
-              <th className="text-[10px] text-[var(--text3)] uppercase tracking-wider text-right px-2 py-2 font-normal">Upload</th>
-              <th className="text-[10px] text-[var(--text3)] uppercase tracking-wider text-right px-2 py-2 font-normal">Seed h</th>
+              <th onClick={() => handleSort('prio')} className="text-[10px] text-[var(--text3)] uppercase tracking-wider text-center px-2 py-2 font-normal cursor-pointer hover:text-[var(--text1)] select-none">
+                Prio {sortCol === 'prio' ? (sortDir === 'asc' ? '↑' : '↓') : '↕'}
+              </th>
+              <th onClick={() => handleSort('ratio')} className="text-[10px] text-[var(--text3)] uppercase tracking-wider text-right px-2 py-2 font-normal cursor-pointer hover:text-[var(--text1)] select-none">
+                Ratio {sortCol === 'ratio' ? (sortDir === 'asc' ? '↑' : '↓') : '↕'}
+              </th>
+              <th onClick={() => handleSort('upload')} className="text-[10px] text-[var(--text3)] uppercase tracking-wider text-right px-2 py-2 font-normal cursor-pointer hover:text-[var(--text1)] select-none">
+                Upload {sortCol === 'upload' ? (sortDir === 'asc' ? '↑' : '↓') : '↕'}
+              </th>
+              <th onClick={() => handleSort('seed')} className="text-[10px] text-[var(--text3)] uppercase tracking-wider text-right px-2 py-2 font-normal cursor-pointer hover:text-[var(--text1)] select-none">
+                Seed h {sortCol === 'seed' ? (sortDir === 'asc' ? '↑' : '↓') : '↕'}
+              </th>
               <th className="text-[10px] text-[var(--text3)] uppercase tracking-wider text-right px-2 py-2 font-normal">Status</th>
             </tr>
           </thead>

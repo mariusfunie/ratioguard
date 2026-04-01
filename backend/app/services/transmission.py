@@ -181,20 +181,20 @@ async def get_recommendations(ratioguard_trackers: list) -> list:
 
         if ratio < threshold:
             severity = "critical"
-            ratio_status = f"Ratio {ratio:.2f} sub threshold {threshold} - PERICOL"
+            ratio_status = f"Ratio {ratio:.2f} sub threshold {threshold} - DANGER"
         elif ratio < threshold * 1.5:
             severity = "warning"
-            ratio_status = f"Ratio {ratio:.2f} aproape de threshold {threshold}"
+            ratio_status = f"Ratio {ratio:.2f} close to threshold {threshold}"
         elif ratio > threshold * 5:
             severity = "good"
-            ratio_status = f"Ratio excelent: {ratio:.2f} - poti descarca fara griji"
+            ratio_status = f"Excellent ratio: {ratio:.2f} - safe to download freely"
         else:
             severity = "ok"
             ratio_status = f"Ratio {ratio:.2f} - OK"
 
         hit_and_run_warning = None
         if low_ratio_torrents:
-            hit_and_run_warning = f"{len(low_ratio_torrents)} torrente cu ratio sub 1.0 - risc penalizare"
+            hit_and_run_warning = f"{len(low_ratio_torrents)} torrents with ratio below 1.0 - hit & run risk"
 
         recommendations.append({
             "tracker": tracker_name,
