@@ -222,13 +222,26 @@ export default function Trackers({ showToast }) {
                   <Badge cls={t.status}>{t.status}</Badge>
                   <Badge cls={t.auth_type}>{t.auth_type}</Badge>
                   {t.prowlarr_id && <Badge cls="api">prowlarr</Badge>}
+                  {t.free_leech_detected && <span className="text-[9px] font-bold tracking-widest uppercase px-2 py-0.5 rounded bg-warn/10 text-warn border border-warn/25">free leech</span>}
                 </div>
               </div>
             </div>
 
-            <p className={`text-4xl font-bold tracking-tight mb-1 ${ratioColor(t)}`}>
-              {t.current_ratio >= 999 ? 'INF' : t.current_ratio?.toFixed(2) ?? 'N/A'}
-            </p>
+            <div className="flex items-end gap-2 mb-1">
+              <p className={`text-4xl font-bold tracking-tight ${ratioColor(t)}`}>
+                {t.current_ratio >= 999 ? 'INF' : t.current_ratio?.toFixed(2) ?? 'N/A'}
+              </p>
+              {t.current_ratio != null && t.previous_ratio != null && (
+                <span className={`text-sm font-bold mb-1.5 ${
+                  t.current_ratio > t.previous_ratio ? 'text-accent' :
+                  t.current_ratio < t.previous_ratio ? 'text-danger' : 'text-[var(--text3)]'
+                }`}>
+                  {t.current_ratio > t.previous_ratio ? '↑' :
+                   t.current_ratio < t.previous_ratio ? '↓' : '→'}
+                  {Math.abs(t.current_ratio - t.previous_ratio).toFixed(2)}
+                </span>
+              )}
+            </div>
 
             <div className="flex gap-4 mb-2 flex-wrap">
               <span className="text-[11px] text-[var(--text3)]">UP <span className="text-[var(--text2)]">{t.upload ?? '-'}</span></span>

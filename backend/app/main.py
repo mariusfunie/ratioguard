@@ -4,7 +4,7 @@ from contextlib import asynccontextmanager
 
 from app.core.database import connect_db, close_db
 from app.core.scheduler import start_scheduler, stop_scheduler
-from app.api import trackers, settings, notifications, dashboard, prowlarr, transmission
+from app.api import trackers, settings, notifications, dashboard, prowlarr, transmission, backup
 
 
 @asynccontextmanager
@@ -32,6 +32,7 @@ app.include_router(notifications.router, prefix="/api/notifications", tags=["not
 app.include_router(dashboard.router, prefix="/api/dashboard", tags=["dashboard"])
 app.include_router(prowlarr.router, prefix="/api/prowlarr", tags=["prowlarr"])
 app.include_router(transmission.router, prefix="/api/transmission", tags=["transmission"])
+app.include_router(backup.router, prefix="/api/backup", tags=["backup"])
 
 
 @app.get("/api/health")

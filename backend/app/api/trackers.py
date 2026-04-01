@@ -13,10 +13,26 @@ def _to_dict(t: TrackerModel) -> dict:
 
 @router.get("", response_model=list[TrackerOut])
 async def list_trackers():
+    from app.core.database import RatioHistoryModel
+    from sqlalchemy import desc
     db = await get_db()
     async with db as session:
         result = await session.execute(select(TrackerModel))
-        return [_to_dict(t) for t in result.scalars().all()]
+        trackers = result.scalars().all()
+        out = []
+        for t in trackers:
+            d = _to_dict(t)
+            # ia penultima valoare din history pentru trend
+            hist = await session.execute(
+                select(RatioHistoryModel)
+                .where(RatioHistoryModel.tracker_id == t.id)
+                .order_by(desc(RatioHistoryModel.recorded_at))
+                .limit(2)
+            )
+            rows = hist.scalars().all()
+            d["previous_ratio"] = rows[1].ratio if len(rows) >= 2 else None
+            out.append(d)
+        return out
 
 
 @router.post("", response_model=TrackerOut, status_code=201)

@@ -84,6 +84,17 @@ async def _do_check(tracker, session):
 
     tracker.last_checked = datetime.utcnow()
     if ratio is not None:
+        # detectie free leech - ratio a crescut dar downloadedEver nu s-a schimbat
+        # indiciu: ratio creste fara download nou
+        old_ratio = tracker.current_ratio
+        old_download = tracker.download
+        if (old_ratio is not None and ratio > old_ratio * 1.05
+                and old_download is not None and old_download == download
+                and download not in (None, "0 B", "-")):
+            tracker.free_leech_detected = True
+        else:
+            tracker.free_leech_detected = False
+
         tracker.current_ratio = ratio
         tracker.upload = upload
         tracker.download = download

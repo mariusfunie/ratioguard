@@ -55,3 +55,13 @@ async def test_discord():
     if r.status_code not in (200, 204):
         raise HTTPException(502, f"Discord returned {r.status_code}")
     return {"message": "Test notification sent"}
+
+
+@router.post("/test-transmission")
+async def test_transmission():
+    from app.services.transmission import get_session_stats
+    try:
+        stats = await get_session_stats()
+        return {"connected": True, "torrents": stats["total_torrent_count"]}
+    except Exception as e:
+        raise HTTPException(502, f"Transmission error: {e}")

@@ -45,6 +45,7 @@ class TrackerModel(Base):
     session_cookies: Mapped[str] = mapped_column(Text, nullable=True)
     prowlarr_id: Mapped[int] = mapped_column(Integer, nullable=True)
     prowlarr_priority: Mapped[int] = mapped_column(Integer, nullable=True)
+    free_leech_detected: Mapped[bool] = mapped_column(Boolean, default=False)
 
 
 class RatioHistoryModel(Base):
@@ -80,6 +81,9 @@ class SettingsModel(Base):
     prowlarr_url: Mapped[str] = mapped_column(String, default="")
     prowlarr_api_key: Mapped[str] = mapped_column(String, default="")
     prowlarr_sync_enabled: Mapped[bool] = mapped_column(Boolean, default=False)
+    transmission_url: Mapped[str] = mapped_column(String, default="")
+    transmission_user: Mapped[str] = mapped_column(String, default="")
+    transmission_pass: Mapped[str] = mapped_column(String, default="")
 
 
 async def connect_db():

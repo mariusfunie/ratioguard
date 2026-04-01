@@ -8,22 +8,35 @@ logger = logging.getLogger(__name__)
 STATUS = {0: "stopped", 1: "check_wait", 2: "checking", 3: "download_wait", 4: "downloading", 5: "seed_wait", 6: "seeding"}
 
 
+async def _get_transmission_config():
+    try:
+        from app.core.database import get_db, SettingsModel
+        from sqlalchemy import select
+        db = await get_db()
+        async with db as session:
+            result = await session.execute(select(SettingsModel).where(SettingsModel.id == "app_settings"))
+            s = result.scalar_one_or_none()
+            if s and s.transmission_url:
+                return s.transmission_url, s.transmission_user or "", s.transmission_pass or ""
+    except Exception:
+        pass
+    return settings.TRANSMISSION_URL, settings.TRANSMISSION_USER, settings.TRANSMISSION_PASS
+
+
 async def _get_session_id() -> str:
+    url, user, passwd = await _get_transmission_config()
     async with httpx.AsyncClient(timeout=10) as client:
-        r = await client.post(
-            settings.TRANSMISSION_URL,
-            auth=(settings.TRANSMISSION_USER, settings.TRANSMISSION_PASS) if settings.TRANSMISSION_USER else None,
-        )
+        r = await client.post(url, auth=(user, passwd) if user else None)
         return r.headers.get("X-Transmission-Session-Id", "")
 
 
 async def _rpc(method: str, arguments: dict = {}) -> dict:
+    url, user, passwd = await _get_transmission_config()
     session_id = await _get_session_id()
-    auth = (settings.TRANSMISSION_USER, settings.TRANSMISSION_PASS) if settings.TRANSMISSION_USER else None
+    auth = (user, passwd) if user else None
     async with httpx.AsyncClient(timeout=15) as client:
         r = await client.post(
-            settings.TRANSMISSION_URL,
-            auth=auth,
+            url, auth=auth,
             headers={"X-Transmission-Session-Id": session_id},
             json={"method": method, "arguments": arguments},
         )

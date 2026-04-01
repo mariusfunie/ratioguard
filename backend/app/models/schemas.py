@@ -34,6 +34,8 @@ class TrackerUpdate(BaseModel):
     api_url: Optional[str] = None
     api_key: Optional[str] = None
     prowlarr_priority: Optional[int] = None
+    previous_ratio: Optional[float] = None
+    free_leech_detected: Optional[bool] = None
 
 
 class TrackerOut(TrackerBase):
@@ -46,6 +48,8 @@ class TrackerOut(TrackerBase):
     error_reason: Optional[str] = None
     prowlarr_id: Optional[int] = None
     prowlarr_priority: Optional[int] = None
+    previous_ratio: Optional[float] = None
+    free_leech_detected: Optional[bool] = None
 
     class Config:
         from_attributes = True
@@ -84,3 +88,6 @@ class AppSettingsUpdate(BaseModel):
     prowlarr_url: Optional[str] = None
     prowlarr_api_key: Optional[str] = None
     prowlarr_sync_enabled: Optional[bool] = None
+    transmission_url: Optional[str] = None
+    transmission_user: Optional[str] = None
+    transmission_pass: Optional[str] = None
