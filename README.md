@@ -1,17 +1,17 @@
 # RatioGuard
 
-Monitor de ratio pentru trackere private de torrente, cu integrare Prowlarr si Transmission.
+Self-hosted ratio monitor for private torrent trackers, with Prowlarr and Transmission integration.
 
 ![RatioGuard Dashboard](docs/screenshot.png)
 
 ## Features
 
-- Monitorizare ratio per tracker (Cookie, Login, API)
-- Integrare Prowlarr - sync automat prioritati indexeri bazat pe ratio
-- Integrare Transmission - recomandari si setare automata bandwidth priority
-- Notificari Discord cand ratio scade sub threshold
-- Dashboard cu grafic history si statistici Prowlarr
-- Senzori Home Assistant via REST API
+- Ratio monitoring per tracker (Cookie, Login, API auth methods)
+- Prowlarr integration - auto-sync indexer priorities based on ratio
+- Transmission integration - seeding recommendations and automatic bandwidth priority management
+- Discord notifications when ratio drops below threshold
+- Dashboard with ratio history chart and Prowlarr activity stats
+- Home Assistant sensors via REST API
 
 ## Stack
 
@@ -19,23 +19,20 @@ Monitor de ratio pentru trackere private de torrente, cu integrare Prowlarr si T
 - **Frontend**: React + Tailwind CSS
 - **Deployment**: Docker Compose
 
-## Instalare
+## Installation
 
-### 1. Cloneaza repo-ul
-
+### 1. Clone the repository
 ```bash
 git clone https://github.com/yourusername/ratioguard.git
 cd ratioguard
 ```
 
-### 2. Creeaza fisierul .env
-
+### 2. Create the .env file
 ```bash
 cp .env.example .env
 ```
 
-Editeaza `.env` cu valorile tale:
-
+Edit `.env` with your values:
 ```env
 SECRET_KEY=your-random-secret-key
 TRANSMISSION_URL=http://localhost:9091/transmission/rpc
@@ -43,8 +40,7 @@ TRANSMISSION_USER=your-username
 TRANSMISSION_PASS=your-password
 ```
 
-### 3. Build frontend
-
+### 3. Build the frontend
 ```bash
 cd frontend
 npm install
@@ -52,40 +48,38 @@ npm run build
 cd ..
 ```
 
-### 4. Porneste
-
+### 4. Start
 ```bash
 docker compose up -d
 ```
 
-Acceseaza la `http://localhost:7990`
+Access the UI at `http://localhost:7990`
 
-## Configurare initiala
+## Initial setup
 
-### Trackere
+### Trackers
 
-Mergi la tab **Trackers** si adauga trackere. Trei metode de autentificare:
+Go to the **Trackers** tab and add your trackers. Three authentication methods are supported:
 
-- **Cookie** - pentru trackere cu Cloudflare. Copiaza cookies din browser.
-- **Login** - username + parola. Nu functioneaza cu Cloudflare.
-- **API** - pentru trackere cu API key (Seedpool, Darkpeers, ItaTorrents etc)
+- **Cookie** - for trackers behind Cloudflare. Copy cookies from your browser's DevTools.
+- **Login** - username and password. Does not work with Cloudflare or CAPTCHA.
+- **API** - for trackers with an API key (Seedpool, Darkpeers, ItaTorrents, etc.)
 
 ### Prowlarr
 
-In **Settings** completeaza URL-ul si API key-ul Prowlarr. Dupa salvare, mergi la tab **Prowlarr** si leaga fiecare indexer de tracker-ul corespunzator. Prioritatile se vor actualiza automat dupa fiecare check.
+In **Settings**, enter your Prowlarr URL and API key. After saving, go to the **Prowlarr** tab and link each indexer to its corresponding tracker. Priorities will update automatically after each ratio check.
 
 ### Transmission
 
-In **Settings** completeaza URL-ul, username si parola Transmission (sau lasa gol daca nu are autentificare). Mergi la tab **Transmission** pentru recomandari si management prioritati.
+In **Settings**, enter your Transmission URL, username and password (leave blank if authentication is disabled). Go to the **Transmission** tab for seeding recommendations and bandwidth priority management.
 
-### Discord Notifications
+### Discord notifications
 
-In **Settings** completeaza Discord Webhook URL. Vei primi notificare cand ratio-ul unui tracker scade sub threshold.
+In **Settings**, enter your Discord Webhook URL. You will receive an alert whenever a tracker's ratio drops below its configured threshold.
 
 ### Home Assistant
 
-Endpoint disponibil la `/api/dashboard/ha-sensors`. Exemplu `sensors.yaml`:
-
+A dedicated endpoint is available at `/api/dashboard/ha-sensors`. Example `sensors.yaml`:
 ```yaml
 - platform: rest
   name: "RatioGuard Filelist"
@@ -95,8 +89,7 @@ Endpoint disponibil la `/api/dashboard/ha-sensors`. Exemplu `sensors.yaml`:
   unit_of_measurement: "ratio"
 ```
 
-## Update
-
+## Updating
 ```bash
 git pull
 cd frontend && npm run build && cd ..
@@ -104,9 +97,9 @@ docker compose down
 docker compose up -d
 ```
 
-## Trackere testate
+## Tested trackers
 
-| Tracker | Metoda |
+| Tracker | Method |
 |---------|--------|
 | FileList.io | Login |
 | SpeedApp.io | Login |
@@ -117,8 +110,7 @@ docker compose up -d
 | Upload.cx | API |
 | HD-Space | Cookie |
 
-## Structura proiect
-
+## Project structure
 ```
 ratioguard/
 ├── backend/
