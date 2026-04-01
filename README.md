@@ -118,7 +118,9 @@ docker compose up -d
 | ItaTorrents.xyz | API |
 | TorrentLeech | Login |
 | Upload.cx | API |
-| HD-Space | Cookie |
+| OnlyEcondes| API |
+| Podzemlje| API |
+| Back-ups| Login|
 
 ## Project structure
 ```
